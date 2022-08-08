@@ -4,28 +4,54 @@
  *   SLICE 1
  **************/
 
+
 function updateCoffeeView(coffeeQty) {
-  // your code here
+  let coffeeCount = document.getElementById('coffee_counter');
+  coffeeCount.innerText = coffeeQty;
 }
 
 function clickCoffee(data) {
-  // your code here
+data.coffee += 1;
+updateCoffeeView(data.coffee);
+renderProducers(data);
 }
+
 
 /**************
  *   SLICE 2
  **************/
-
 function unlockProducers(producers, coffeeCount) {
-  // your code here
+  for (let i = 0; i < producers.length; i++) {
+    if ((coffeeCount * 2) >= producers[i].price) {
+      producers[i].unlocked = true;
+    }
+  }
 }
 
 function getUnlockedProducers(data) {
-  // your code here
+  let output = [];
+  for (let i = 0; i < data.producers.length; i++) {
+    if (data.producers[i].unlocked === true) {
+      output.push(data.producers[i])
+    }
+  }
+  return output;
 }
 
+// function getUnlockedProducers(data) {
+//   let output = [];
+//   data.producers.forEach(obj => output.push(obj))
+//   return output.filter(obj => obj.unlocked === true);
+// }
+
 function makeDisplayNameFromId(id) {
-  // your code here
+    let newString = id.split('_');
+    for (let i = 0; i < newString.length; i++) { //['input', 'string']
+      let splitWord = newString[i].split('') //[i,n,p,u,t]
+      splitWord[0] = splitWord[0].toUpperCase(); //['I']
+      newString[i] = splitWord.join('')
+    }
+    return newString.join(' '); //'Input String'
 }
 
 // You shouldn't need to edit this function-- its tests should pass once you've written makeDisplayNameFromId
@@ -50,43 +76,121 @@ function makeProducerDiv(producer) {
 }
 
 function deleteAllChildNodes(parent) {
-  // your code here
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild)
+  }
 }
 
+// coffeeCountView function
+// if the coffeeCount in coffeeCountView is equal to half the price of the
+// coffee productors, you want to append the coffee producer on the page
+
+// unlockProducers function
+// you will need unlockProducers function to change the unlock from false to
+// true everytime coffeeCountView has reached half the amount of the price
+
+// makeProducerDiv function 
+// you will need to append producer div elements for this to actually show up
+// the page
+
 function renderProducers(data) {
-  // your code here
+  updateCoffeeView(data.coffee);
+  unlockProducers(data.producers, data.coffee) 
+
+    let allTruePro = getUnlockedProducers(data)
+    let parent = document.getElementById('producer_container')
+    //when refreshing the page, everything in this container resets/restarts
+    if (parent) {
+      deleteAllChildNodes(parent);
+    }
+    allTruePro.forEach(producer => {
+      let proContainer = document.getElementById('producer_container')
+      proContainer.append(makeProducerDiv(producer));
+    })
+
 }
+
 
 /**************
  *   SLICE 3
  **************/
-
+// filter and find methods will work!! remb to try!!!!
+// returns an obj of all the producers
 function getProducerById(data, producerId) {
-  // your code here
+  let obj = {};
+  data.producers.forEach(producer => {
+    if (producer.id === producerId) {
+      obj = producer;
+      //obj = { ...producer}
+    }
+  })
+  return obj;
 }
+//only one producer gets stored in the object
 
+// you can use getProducerById to look through them and check
+// if the price of each one is less than or equal to the amount of coffee
+// you currently have
 function canAffordProducer(data, producerId) {
-  // your code here
+  let objOfProducer = getProducerById(data, producerId)
+  if (data.coffee >= objOfProducer.price) return true;
+  else return false;
 }
 
 function updateCPSView(cps) {
-  // your code here
+  let cpsIndicator = document.getElementById('cps');
+  cpsIndicator.innerText = cps;
 }
 
 function updatePrice(oldPrice) {
-  // your code here
+  return oldPrice = Math.floor(oldPrice * 1.25)
 }
 
 function attemptToBuyProducer(data, producerId) {
-  // your code here
+  if(canAffordProducer(data, producerId)) {
+    let objOfProducer = getProducerById(data, producerId); //object of producers 
+    // expectedResult:{ id: 'producer_A', price: 50, cps: 5, qty: 0 },
+    // data.producers.map(producer => {
+    //   if (producerId === producer.id) {
+    //     producer.qty ++;
+    //   }
+    // })
+    objOfProducer.qty++;
+    data.coffee -= objOfProducer.price;
+    objOfProducer.price = updatePrice(objOfProducer.price);
+    data.totalCPS += objOfProducer.cps;
+    return true;
+  }
+  else return false;
 }
 
+
+  //FIRST WORK ON GETTING THE BUY BUTTON TO WORK (((donneeeeeeee)))
+  //FIX THE ALERT BUTTON - ALERT SHOULD NOT POPULATE ANYWHERE EXCEPT BUY BUTTON
 function buyButtonClick(event, data) {
-  // your code here
+  //event.target.id === 'buy_producer_A'
+  if (event.target.tagName === 'BUTTON') {
+    let name = event.target.id.split('_').slice(1,3).join('_');
+    if (canAffordProducer(data, name)) {
+      attemptToBuyProducer(data, name);
+      renderProducers(data);
+      updateCPSView(data.totalCPS);
+    } else {
+      window.alert('Not enough coffee!')
+    }
+  }
 }
+
 
 function tick(data) {
-  // your code here
+  data.coffee += data.totalCPS;
+  updateCoffeeView(data.coffee)
+  renderProducers(data);
+
+  
+
+
+
 }
 
 /*************************

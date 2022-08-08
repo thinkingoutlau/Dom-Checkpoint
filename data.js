@@ -2,6 +2,7 @@ window.data = {
   coffee: 0,
   totalCPS: 0,
   producers: [
+    //after 5 coffeeCountView
     {
       id: 'chemex',
       price: 10,
@@ -9,6 +10,7 @@ window.data = {
       cps: 1,
       qty: 0
     },
+    // after 25 coffeeCountView
     {
       id: 'french_press',
       price: 50,
@@ -16,6 +18,7 @@ window.data = {
       cps: 2,
       qty: 0
     },
+    // after 50 coffeeCountView
     {
       id: 'mr._coffee',
       price: 100,
@@ -23,6 +26,7 @@ window.data = {
       cps: 5,
       qty: 0
     },
+    // after 250  coffeCountView
     {
       id: 'ten_cup_urn',
       price: 500,
